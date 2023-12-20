@@ -1,9 +1,14 @@
 plugins {
     id 'java'
+    id 'jacoco'
 }
 
 repositories {
     mavenCentral()
+}
+
+jacoco {
+    toolVersion = "0.8.9"
 }
 
 dependencies {
@@ -17,6 +22,11 @@ version = '1.0-SNAPSHOT'
 description = 'Games'
 java.sourceCompatibility = JavaVersion.VERSION_17
 
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
@@ -24,6 +34,8 @@ tasks.withType(JavaCompile) {
 tasks.withType(Test) {
     systemProperty "file.encoding", "UTF-8"
 }
+
+
 
 allprojects {
     gradle.projectsEvaluated {
@@ -33,3 +45,12 @@ allprojects {
     }
 }
 
+tasks.jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+    }
+}
